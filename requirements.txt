@@ -1,0 +1,9 @@
+streamlit
+openai
+llama-index
+nltk
+PyPDF2
+langchain
+chromadb
+pysqlite3-binary
+pypdf
