@@ -38,6 +38,6 @@ vectordb = Chroma.from_documents(
     documents=chunked_documents,
     embedding=embeddings,
     #collection_metadata={"hnsw:space": "cosine"}, 
-    persist_directory="./chroma_store/"
+    persist_directory="./ask-economist-test/chroma_store/"
 )
 vectordb.persist()
