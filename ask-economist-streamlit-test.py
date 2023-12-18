@@ -27,10 +27,7 @@ embeddings = AzureOpenAIEmbeddings(deployment="text-embedding-ada-002",chunk_siz
 
 dir="./chroma_store/"
 vectordb = Chroma(persist_directory=dir,
-                  embedding_function=embeddings, 
-                  name="ask-economist-collection",
-                  text_column="page_content", 
-                  columns=["metadata_source"])
+                  embedding_function=embeddings)
 
 def create_agent_chain():
     llm = AzureChatOpenAI(temperature=0, 
