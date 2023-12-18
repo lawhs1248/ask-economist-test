@@ -29,7 +29,7 @@ for file in os.listdir(pdf_folder_path):
         documents.extend(loader.load())
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 chunked_documents = text_splitter.split_documents(documents)
-data = [(text.page_content, text.metadata["source"], text.metadata["page"], embedding) for text, embedding in zip(chunked_documents, embeddings)]
+data = [(text.metadata["source"], embedding) for text, embedding in zip(chunked_documents, embeddings)]
 
 client = chromadb.Client()
 if client.list_collections():
