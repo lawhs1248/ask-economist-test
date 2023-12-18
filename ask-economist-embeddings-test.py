@@ -29,15 +29,16 @@ for file in os.listdir(pdf_folder_path):
         documents.extend(loader.load())
 text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=10)
 chunked_documents = text_splitter.split_documents(documents)
+data = [(text.page_content, text.metadata["source"], text.metadata["page"], embedding) for text, embedding in zip(chunked_documents, embeddings)]
+
 client = chromadb.Client()
 if client.list_collections():
-    consent_collection = client.get_or_create_collection(name="ask-economist-collection",metadata={"hnsw:space": "cosine"})
+    consent_collection = client.get_or_create_collection(name="ask-economist-collection")
 else:
     print("Collection already exists")
 vectordb = Chroma.from_documents(
-    documents=chunked_documents,
+    documents=data,
     embedding=embeddings,
-    #collection_metadata={"hnsw:space": "cosine"}, 
-    persist_directory="./ask-economist-test/chroma_store/"
+    persist_directory="./chroma_store/"
 )
 vectordb.persist()

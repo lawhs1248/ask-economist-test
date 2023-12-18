@@ -12,7 +12,7 @@ import chromadb
 from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
-from langchain.chains import ConversationalRetrievalChain
+from langchain.chains import RetrievalQA
 
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
@@ -26,33 +26,31 @@ os.environ["OPENAI_API_KEY"] = openai_token
 embeddings = AzureOpenAIEmbeddings(deployment="text-embedding-ada-002",chunk_size=1)
 
 dir="./chroma_store/"
-vectordb = Chroma(persist_directory=dir,embedding_function=embeddings)
-
-metadata_field_info = [
-    AttributeInfo(
-        name="source",
-        description="The answer which is from, the pdf documents name, e.g. `BA_1Q2023.pdf`",
-        type="string",
-    )
-]
+vectordb = Chroma(persist_directory=dir,
+                  embedding_function=embeddings, 
+                  name="ask-economist-collection",
+                  text_column="page_content", 
+                  columns=["metadata_source"])
 
 def create_agent_chain():
     llm = AzureChatOpenAI(temperature=0, 
         verbose=True, 
         deployment_name="gpt-4",
     )
-    chain = ConversationalRetrievalChain.from_llm(
-        llm, vectordb.as_retriever()
+    chain = RetrievalQA.from_chain_type(
+        llm, 
+        chain_type='stuff'
+        retreiver=vectordb.as_retriever(), 
+        return_source_documents=True
         )
-    #chain = load_qa_chain(llm, chain_type="stuff")
     return chain
 
 def get_llm_response(query, source_documents):
     matching_docs = vectordb.similarity_search(query)
-    matching_source = vectordb.metadata['source'](source_documents)
+    doc_name = ','.join(set([str(doc.metadata['metadata_source']) for doc in matching_docs['source_documents']]))
     chain = create_agent_chain()
-    answer = chain.run(input_documents=matching_docs, question=query, source=matching_source)
-    return answer
+    answer = chain.run(input_documents=matching_docs, question=query)
+    return answer, doc_name
 
 
 # Streamlit UI
@@ -64,5 +62,5 @@ form_input = st.text_input('Enter Query')
 submit = st.button("Generate")
 
 if submit:
-    st.write(get_llm_response(form_input, form_input))
+    st.write(get_llm_response(form_input))
 
