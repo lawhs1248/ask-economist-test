@@ -36,9 +36,7 @@ chain = RetrievalQAWithSourcesChain.from_chain_type(
     llm=llm,
     chain_type="stuff",
     retriever=vectordb.as_retriever(),
-    return_source_documents=True,
-    reduce_k_below_max_tokens=True,
-    max_tokens_limit=26000
+    return_source_documents=True
 )
 
 # Define the 'generate_response' function to send the user's message to the AI model 
@@ -95,7 +93,9 @@ if 'answers' in st.session_state:
                 with cols[1]:
                     st.subheader("Sources: ")
                     for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
-                        st.write(index+1, ". ", source)
+                        source_parts = source.split("\\")  # Split by backslash
+                        source_name = source_parts[-1]  # Take the last part after backslash
+                        st.write(index+1, ". ", source_name)
                         st.text(" ")
-
+            
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
