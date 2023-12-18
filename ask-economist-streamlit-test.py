@@ -12,7 +12,7 @@ import chromadb
 from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQAWithSourcesChain
 
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
@@ -34,8 +34,8 @@ def create_agent_chain():
         verbose=True, 
         deployment_name="gpt-4",
     )
-    chain = RetrievalQA.from_chain_type(
-        llm, 
+    chain = RetrievalQAWithSourcesChain.from_chain_type(
+        llm=llm, 
         chain_type='stuff',
         retreiver=vectordb.as_retriever(), 
         return_source_documents=True
