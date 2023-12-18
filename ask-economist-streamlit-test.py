@@ -39,7 +39,7 @@ def create_agent_chain():
     )
     chain = RetrievalQA.from_chain_type(
         llm, 
-        chain_type='stuff'
+        chain_type='stuff',
         retreiver=vectordb.as_retriever(), 
         return_source_documents=True
         )
