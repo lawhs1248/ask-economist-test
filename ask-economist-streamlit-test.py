@@ -13,8 +13,21 @@ from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
 from langchain.chains import RetrievalQAWithSourcesChain
-from prompt import PROMPT
+from langchain.prompts.chat import (
+    ChatPromptTemplate,
+    SystemMessagePromptTemplate,
+    HumanMessagePromptTemplate,
+)
 
+system_template = """Use the following pieces of context to answer the user's question.
+If you don't know the answer, just say that you don't know, don't try to make up an answer.
+----------------
+{context}"""
+messages = [
+    SystemMessagePromptTemplate.from_template(system_template),
+    HumanMessagePromptTemplate.from_template("{question}"),
+]
+PROMPT = ChatPromptTemplate.from_messages(messages)
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
 openai_endpoint = "https://mti-nerve-openai-us-east-2.openai.azure.com/"
@@ -81,6 +94,28 @@ chain = RetrievalQAWithSourcesChain.from_chain_type(
     max_tokens_limit=26000
 )
 
+# Define the 'generate_response' function to send the user's message to the AI model 
+# and append the response to the 'generated' list.
+def generate_response(prompt, conversation_chain):
+    try:
+        result = conversation_chain(prompt)
+        return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
+    except Exception as e:
+        print(e)
+        return "I am unable to get the response based on this question, please fine-tune it before retrying", ""
+
+# The 'chat_click' function is defined to send the user's message to the AI model 
+# and append the response to the conversation history.
+def chat_click(user_chat_input, conversation_chain):
+    if user_chat_input != '':
+        answer, sources=generate_response(user_chat_input, conversation_chain)
+        st.session_state['sources'] = []
+        st.session_state['past'] = []
+        st.session_state['answers'] = []
+        st.session_state['sources'].append(sources)
+        st.session_state['past'].append(user_chat_input)
+        st.session_state['answers'].append(answer)
+
 # Streamlit to set the page header and icon.
 st.title("Ask Economist")
 # container for text box
@@ -116,30 +151,3 @@ if 'answers' in st.session_state:
                         st.text(" ")
 
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
-
-
-
-
-
-
-# Define the 'generate_response' function to send the user's message to the AI model 
-# and append the response to the 'generated' list.
-def generate_response(prompt, conversation_chain):
-    try:
-        result = conversation_chain(prompt)
-        return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
-    except Exception as e:
-        print(e)
-        return "I am unable to get the response based on this question, please fine-tune it before retrying", ""
-
-# The 'chat_click' function is defined to send the user's message to the AI model 
-# and append the response to the conversation history.
-def chat_click(user_chat_input, conversation_chain):
-    if user_chat_input != '':
-        answer, sources=generate_response(user_chat_input, conversation_chain)
-        st.session_state['sources'] = []
-        st.session_state['past'] = []
-        st.session_state['answers'] = []
-        st.session_state['sources'].append(sources)
-        st.session_state['past'].append(user_chat_input)
-        st.session_state['answers'].append(answer)
