@@ -13,7 +13,6 @@ from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
 from langchain.chains import RetrievalQAWithSourcesChain
-from prompt import PROMPT
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
 openai_endpoint = "https://mti-nerve-openai-us-east-2.openai.azure.com/"
