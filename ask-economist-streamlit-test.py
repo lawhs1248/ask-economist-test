@@ -42,7 +42,7 @@ def create_agent_chain():
         )
     return chain
 
-def get_llm_response(query, source_documents):
+def get_llm_response(query):
     matching_docs = vectordb.similarity_search(query)
     doc_name = ','.join(set([str(doc.metadata['metadata_source']) for doc in matching_docs['source_documents']]))
     chain = create_agent_chain()
