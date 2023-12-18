@@ -72,13 +72,11 @@ llm = AzureChatOpenAI(temperature=0,
     verbose=True, 
     deployment_name="gpt-4",
 )
-chain_type_kwargs = {"prompt": PROMPT}
 chain = RetrievalQAWithSourcesChain.from_chain_type(
     llm=llm,
     chain_type="stuff",
     retriever=vectordb.as_retriever(),
     return_source_documents=True,
-    chain_type_kwargs=chain_type_kwargs,
     reduce_k_below_max_tokens=True,
     max_tokens_limit=26000
 )
