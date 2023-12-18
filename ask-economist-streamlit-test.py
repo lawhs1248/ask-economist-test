@@ -13,21 +13,7 @@ from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
 from langchain.chains import RetrievalQAWithSourcesChain
-from langchain.prompts.chat import (
-    ChatPromptTemplate,
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-)
-
-system_template = """Use the following pieces of context to answer the user's question.
-If you don't know the answer, just say that you don't know, don't try to make up an answer.
-----------------
-{context}"""
-messages = [
-    SystemMessagePromptTemplate.from_template(system_template),
-    HumanMessagePromptTemplate.from_template("{question}"),
-]
-PROMPT = ChatPromptTemplate.from_messages(messages)
+from prompt import PROMPT
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
 openai_endpoint = "https://mti-nerve-openai-us-east-2.openai.azure.com/"
