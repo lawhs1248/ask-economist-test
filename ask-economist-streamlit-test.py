@@ -95,8 +95,8 @@ if 'answers' in st.session_state:
                     st.write(st.session_state['answers'][i])
                 with cols[1]:
                     st.subheader("Sources: ")
-                    for index, url in enumerate(st.session_state['sources'][i].split(" ")):
-                        st.write(index+1, ". ", url)
+                    for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
+                        st.write(index+1, ". ", source)
                         st.text(" ")
 
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
