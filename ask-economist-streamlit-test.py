@@ -23,45 +23,6 @@ os.environ["OPENAI_API_VERSION"] = "2023-12-01-preview"
 os.environ["OPENAI_API_BASE"] = openai_endpoint
 os.environ["OPENAI_API_KEY"] = openai_token    
 
-""" embeddings = AzureOpenAIEmbeddings(deployment="text-embedding-ada-002",chunk_size=1)
-
-dir="./chroma_store/"
-vectordb = Chroma(persist_directory=dir,
-                  embedding_function=embeddings)
-
-def create_agent_chain():
-    llm = AzureChatOpenAI(temperature=0, 
-        verbose=True, 
-        deployment_name="gpt-4",
-    )
-    chain = RetrievalQAWithSourcesChain.from_chain_type(
-        llm=llm, 
-        chain_type='stuff',
-        retreiver=vectordb.as_retriever(), 
-        return_source_documents=True
-        )
-    return chain
-
-def get_llm_response(query):
-    matching_docs = vectordb.similarity_search(query)
-    chain = create_agent_chain()
-    answer = chain.run(input_documents=matching_docs, question=query)
-    doc_name = ' '.join(list(set([(doc.metadata['source']) for doc in matching_docs['source_documents']])))
-    return answer, doc_name
-
-
-# Streamlit UI
-# ===============
-st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
-st.header("Ask Economist")
-
-form_input = st.text_input('Enter Query')
-submit = st.button("Generate")
-
-if submit:
-    st.write(get_llm_response(form_input))
- """
-
 embeddings = AzureOpenAIEmbeddings(deployment="text-embedding-ada-002",chunk_size=1)
 dir="./chroma_store/"
 vectordb = Chroma(persist_directory=dir,
@@ -104,6 +65,7 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['answers'].append(answer)
 
 # Streamlit to set the page header and icon.
+st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
 st.title("Ask Economist")
 # container for text box
 container = st.container()
