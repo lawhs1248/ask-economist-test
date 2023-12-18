@@ -77,6 +77,9 @@ if submit:
  """
 
 embeddings = AzureOpenAIEmbeddings(deployment="text-embedding-ada-002",chunk_size=1)
+dir="./chroma_store/"
+vectordb = Chroma(persist_directory=dir,
+                  embedding_function=embeddings)
 
 llm = AzureChatOpenAI(temperature=0, 
     seed=1,
@@ -87,7 +90,7 @@ chain_type_kwargs = {"prompt": PROMPT}
 chain = RetrievalQAWithSourcesChain.from_chain_type(
     llm=llm,
     chain_type="stuff",
-    retriever=vector_store.as_retriever(),
+    retriever=vectordb.as_retriever(),
     return_source_documents=True,
     chain_type_kwargs=chain_type_kwargs,
     reduce_k_below_max_tokens=True,
