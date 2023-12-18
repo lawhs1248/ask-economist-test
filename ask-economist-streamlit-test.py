@@ -13,6 +13,7 @@ from langchain.chains.query_constructor.base import AttributeInfo
 from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
 from langchain.chains import RetrievalQAWithSourcesChain
+from prompt import PROMPT
 
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
