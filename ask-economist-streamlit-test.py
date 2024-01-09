@@ -92,7 +92,7 @@ if 'answers' in st.session_state:
                     st.write(st.session_state['answers'][i])
                 with cols[1]:
                     st.subheader("Sources: ")
-                    for index, source in enumerate(st.session_state['source'][i].split(".pdf")):
+                    for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
                         st.write(index+1, source)
                         st.text(" ")
             
