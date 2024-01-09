@@ -44,7 +44,7 @@ chain = RetrievalQAWithSourcesChain.from_chain_type(
 def generate_response(prompt, conversation_chain):
     try:
         result = conversation_chain(prompt)
-        return result["answer"], ' '.join(list(set([doc.metadata['title'] for doc in result['source_documents']])))
+        return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
     except Exception as e:
         print(e)
         return "I am unable to get the response based on this question, please fine-tune it before retrying", ""
@@ -57,7 +57,7 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['sources'] = []
         st.session_state['past'] = []
         st.session_state['answers'] = []
-        st.session_state['sources'].append(title)
+        st.session_state['sources'].append(sources)
         st.session_state['past'].append(user_chat_input)
         st.session_state['answers'].append(answer)
 
@@ -92,8 +92,8 @@ if 'answers' in st.session_state:
                     st.write(st.session_state['answers'][i])
                 with cols[1]:
                     st.subheader("Sources: ")
-                    for index, title in enumerate(st.session_state['source'][i].split(".pdf")):
-                        st.write(index+1, title)
+                    for index, source in enumerate(st.session_state['source'][i].split(".pdf")):
+                        st.write(index+1, source)
                         st.text(" ")
             
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
