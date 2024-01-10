@@ -36,25 +36,11 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=10
 chunked_documents = text_splitter.split_documents(documents)
 #data = [set((text.metadata["source"], embedding) for text, embedding in zip(chunked_documents, embeddings))]
 
-generated_titles = []
-for text in chunked_documents:
-    response = AzureChatOpenAI.ChatCompletion.create(
-        model="gpt-4.0-turbo-003",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": text.content},
-        ]
-    )
-    generated_titles.append(response['choices'][0]['message']['content'])
-
 client = chromadb.Client()
 if client.list_collections():
     consent_collection = client.get_or_create_collection(name="ask-economist-collection")
 else:
     print("Collection already exists")
-    
-for i, text in enumerate(chunked_documents):
-    text.metadata["title"] = generated_titles[i]
     
 vectordb = Chroma.from_documents(
     documents=chunked_documents,

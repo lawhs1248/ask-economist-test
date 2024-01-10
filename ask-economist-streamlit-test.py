@@ -93,7 +93,12 @@ if 'answers' in st.session_state:
                 with cols[1]:
                     st.subheader("Sources: ")
                     for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
-                        st.write(index+1, source)
+                        source_parts = source.split("\\")  # Split by backslash
+                        source_name = source_parts[-1]  # Take the last part after backslash
+                        github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/"
+                        file_path = source_name[2:]
+                        st.write(index+1, source_name)
+                        st.write(f"{github_url}{file_path}.pdf")
                         st.text(" ")
             
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
