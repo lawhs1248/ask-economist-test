@@ -66,7 +66,7 @@ st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
 st.title("Ask Economist")
 st.subheader('Notes:')
 term_of_use = """- This application is a BETA version
-- Accuracy: Due t ongoing development and the nature of the AI language model, the results may generate inaccurate or misleading information
+- Accuracy: Due to ongoing development and the nature of the AI language model, the results may generate inaccurate or misleading information
 - Accountability: All output myst be fact-checked, proof-read, and adapted as appropriate by officers for their work
 - Feedback: If you have any suggestion to improve this application, please email: :blue[mti-do_helpdesk@mti.gov.sg]
 """
@@ -103,7 +103,7 @@ if 'answers' in st.session_state:
                         if source:  # Check if source is not an empty string
                             source_parts = source.split("\\")  # Split by backslash
                             source_name = source_parts[-1]  # Take the last part after backslash
-                            github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input"
+                            github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input/"
                             st.write(index+1, source_name)
                             st.write(github_url + source_name.replace(' ', '%') + '.pdf')
                                 
