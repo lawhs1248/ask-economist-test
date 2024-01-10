@@ -66,6 +66,7 @@ st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
 st.title("Ask Economist")
 st.subheader('Notes:')
 term_of_use = """- This application is a BETA version
+- Data Security: Please only input information classified up to Official (Closed) / Non-Sensitive 
 - Accuracy: Due to ongoing development and the nature of the AI language model, the results may generate inaccurate or misleading information
 - Accountability: All output must be fact-checked, proof-read, and adapted as appropriate by officers for their work
 - Feedback: If you have any suggestion to improve this application, please email: :blue[mti-do_helpdesk@mti.gov.sg]
@@ -76,13 +77,14 @@ container = st.container()
 # container for chat history
 response_container = st.container()
 
+sample_qns = """Sample questions:
+1. How can we boost Singapore's productivity?
+2. Was the JGI scheme successful and if so, how was it successful? 
+"""
+
 with container:
     with st.form(key='my_form', clear_on_submit=True):
         st.subheader("Question: ")
-        sample_qns = """Here are some sample questions:
-        1. How can we boost Singapore's Productivity?
-        2. Was the JGI scheme successful and if so, how is it successful? 
-        """
         st.markdown(sample_qns)
         user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
         submit_button = st.form_submit_button(label='Send')
