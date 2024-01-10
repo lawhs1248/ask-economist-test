@@ -64,6 +64,12 @@ def chat_click(user_chat_input, conversation_chain):
 # Streamlit to set the page header and icon.
 st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
 st.title("Ask Economist")
+st.subheader('Notes:')
+st.markdown("""- This application is a BETA version
+            - Accuracy: Due t ongoing development and the nature of the AI language model, the results may generate inaccurate or misleading information
+            - Accountability: All output myst be fact-checked, proof-read, and adapted as appropriate by officers for their work
+            - Feedback: If you have any suggestion to improve this application, please email: :blue[<u>mti-do_helpdesk@mti.gov.sg</u>]
+            """)
 # container for text box
 container = st.container()
 # container for chat history
@@ -97,7 +103,7 @@ if 'answers' in st.session_state:
                         source_name = source_parts[-1]  # Take the last part after backslash
                         github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/"
                         st.write(index+1, source_name)
-                        st.write(f"{github_url}{source_name}.pdf")
+                        st.write(github_url, source_name.replace(' ','%'), '.pdf')
                         #st.text(" ")
             
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
