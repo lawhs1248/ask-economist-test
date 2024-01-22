@@ -112,7 +112,7 @@ if 'answers' in st.session_state:
                             source_name = source_parts[-1]  # Take the last part after backslash
                             github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input/"
                             st.write(index+1, source_name)
-                            st.download_button(label="Download PDF",
-                                               file_name = "github_url + source_name.replace(' ', '%20') + '.pdf'")
+                            if st.button("Download PDF"):
+                                st.markdown(f'<a href="{"github_url + source_name.replace(' ', '%20') + '.pdf'"}" download="source_name.replace(' ', '%20') + '.pdf'">Click to download PDF</a>', unsafe_allow_html=True)
                                 
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
