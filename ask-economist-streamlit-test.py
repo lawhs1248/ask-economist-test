@@ -95,7 +95,7 @@ sample_qns = """Sample questions:
 if 'messages' not in st.session_state:
     # Start with first message from assistant
     st.session_state['messages'] = [{"role": "assistant", 
-                                  "content": "Hi user! Ask me questions!"}]
+                                  "content": " "}]
 
 for message in st.session_state.messages:
     if message["role"] == 'assistant':
