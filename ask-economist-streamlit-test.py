@@ -27,17 +27,48 @@ dir="./chroma_store/"
 vectordb = Chroma(persist_directory=dir,
                   embedding_function=embeddings)
 
-llm = AzureChatOpenAI(temperature=0, 
-    seed=1,
-    verbose=True, 
-    deployment_name="gpt-4",
-)
-chain = RetrievalQAWithSourcesChain.from_chain_type(
-    llm=llm,
-    chain_type="stuff",
-    retriever=vectordb.as_retriever(),
-    return_source_documents=True
-)
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+
+if prompt := st.chat_input("What do you want to say to your PDF?"):
+    # Display your message
+    with st.chat_message("user"):
+        st.markdown(prompt)
+    # Add your message to chat history
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    # query ChromaDB based on your prompt. These results are ordered by similarity.
+    q = vectordb.query(
+        query_texts=[prompt]
+    )
+    results = q["documents"][0]
+
+    prompts = []
+    for r in results:
+        # construct prompts based on the retrieved text chunks in results 
+        prompt = "Please extract the following: " + prompt + "  solely based on the text below. Use an unbiased and journalistic tone. If you're unsure of the answer, say you cannot find the answer. \n\n" + r
+
+        prompts.append(prompt)
+    prompts.reverse()
+
+    openai_res = AzureChatOpenAI.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "assistant", "content": prompt} for prompt in prompts],
+        temperature=0,
+    )
+
+    response = openai_res["choices"][0]["message"]["content"]
+    with st.chat_message("assistant"):
+        st.markdown(response)
+
+    # append the response to chat history
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
 # Define the 'generate_response' function to send the user's message to the AI model 
 # and append the response to the 'generated' list.
@@ -112,7 +143,6 @@ if 'answers' in st.session_state:
                             source_name = source_parts[-1]  # Take the last part after backslash
                             github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input/"
                             st.write(index+1, source_name)
-                            if st.button("Download PDF"):
-                                st.markdown(f'<a href="{"github_url + source_name.replace(' ', '%20') + '.pdf'"}" download="source_name.replace(' ', '%20') + '.pdf'">Click to download PDF</a>', unsafe_allow_html=True)
+                            st.write(github_url + source_name.replace(' ', '%20') + '.pdf')
                                 
         # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
