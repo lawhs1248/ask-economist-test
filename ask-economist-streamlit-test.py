@@ -98,14 +98,14 @@ with container:
         st.markdown(sample_qns)
         if 'messages' not in st.session_state:
             user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
-        for message in st.session_state.messages:
-            if message["role"] == 'assistant':
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-            else:
-                with st.chat_message(message["role"]):
-                    st.markdown(message["content"])
-        submit_button = st.form_submit_button(label='Send')
+            for message in st.session_state.messages:
+                if message["role"] == 'assistant':
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+                else:
+                    with st.chat_message(message["role"]):
+                        st.markdown(message["content"])
+            submit_button = st.form_submit_button(label='Send')
 
     
     if submit_button and user_input:
