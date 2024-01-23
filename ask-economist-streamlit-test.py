@@ -49,12 +49,16 @@ chain = ConversationalRetrievalChain.from_llm(
 # Define the 'generate_response' function to send the user's message to the AI model 
 # and append the response to the 'generated' list.
 def generate_response(prompt, conversation_chain):
-    try:
-        result = conversation_chain(prompt)
-        return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
-    except Exception as e:
-        print(e)
-        return "I am unable to get the response based on this question, please fine-tune it before retrying", ""
+    prompt = prompt.string()
+    if prompt: 
+        st.session_state.chat_history.append({"type": "normal", "data": prompt, "role": "human"})
+        try:
+            result = conversation_chain.run(prompt)
+            st.session_state.chat_history.append({"type": "normal", "data": result["answer"], "role": "ai"})
+            return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
+        except Exception as e:
+            print(e)
+            st.session_state.chat_history.append({'type': 'normal', 'data':  "I am unable to get the response based on this question, please fine-tune it before retrying", 'role': 'ai'})
 
 # The 'chat_click' function is defined to send the user's message to the AI model 
 # and append the response to the conversation history.
@@ -67,9 +71,6 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['sources'].append(sources)
         st.session_state['past'].append(user_chat_input)
         st.session_state['answers'].append(answer)
-        st.session_state.messages.append({"role": "user", "content": user_chat_input})
-        with st.chat_message("user"):
-            st.markdown(user_chat_input)
 
 # Streamlit to set the page header and icon.
 st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
@@ -96,16 +97,19 @@ with container:
     with st.form(key='my_form', clear_on_submit=True):
         st.subheader("Question: ")
         st.markdown(sample_qns)
-        if 'messages' not in st.session_state:
-            user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
-            for message in st.session_state.messages:
-                if message["role"] == 'assistant':
-                    with st.chat_message(message["role"]):
-                        st.markdown(message["user_input"])
-                else:
-                    with st.chat_message(message["role"]):
-                        st.markdown(message["user_input"])
-            submit_button = st.form_submit_button(label='Send')
+        user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
+        submit_button = st.form_submit_button(label='Send')
+        for i in range(len(st.session_state.chat_history)):     
+                if st.session_state.chat_history[i]["role"] == "human":
+                    with st.chat_message("user"):
+                        st.write(st.session_state.chat_history[i]["data"])
+                elif st.session_state.chat_history[i]["role"] == "ai":
+                    with st.chat_message("assistant"):
+                        if st.session_state.chat_history[i]["type"] == "normal":
+                            st.write(st.session_state.chat_history[i]["data"])
+                        elif st.session_state.chat_history[i]["type"] == "image":
+                            st.image(st.session_state.chat_history[i]["data"])
+
 
     
     if submit_button and user_input:
