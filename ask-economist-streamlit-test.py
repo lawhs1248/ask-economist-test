@@ -67,9 +67,9 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['sources'].append(sources)
         st.session_state['past'].append(user_chat_input)
         st.session_state['answers'].append(answer)
-        #st.session_state.messages.append({"role": "user", "content": user_chat_input})
-        #with st.chat_message("user"):
-        #    st.markdown(user_chat_input)
+        st.session_state.messages.append({"role": "user", "content": user_chat_input})
+        with st.chat_message("user"):
+            st.markdown(user_chat_input)
 
 # Streamlit to set the page header and icon.
 st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
@@ -91,25 +91,20 @@ sample_qns = """Sample questions:
 1. How can we boost Singapore's productivity?
 2. Was the JGI scheme successful and if so, how was it successful? 
 """
-# Initialize chat history
-if 'messages' not in st.session_state:
-    # Start with first message from assistant
-    st.session_state['messages'] = [{"role": "assistant", 
-                                  "content": " "}]
-
-for message in st.session_state.messages:
-    if message["role"] == 'assistant':
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-    else:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
 
 with container:
     with st.form(key='my_form', clear_on_submit=True):
         st.subheader("Question: ")
         st.markdown(sample_qns)
-        user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
+        if 'messages' not in st.session_state:
+            user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
+        for message in st.session_state.messages:
+            if message["role"] == 'assistant':
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+            else:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
         submit_button = st.form_submit_button(label='Send')
 
     
