@@ -95,46 +95,48 @@ sample_qns = """Sample questions:
 1. How can we boost Singapore's productivity?
 2. Was the JGI scheme successful and if so, how was it successful? 
 """
-
-with container:
-    with st.form(key='my_form', clear_on_submit=True):
-        st.subheader("Question: ")
-        st.markdown(sample_qns)
-        user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
-        submit_button = st.form_submit_button(label='Send')
-        for i in range(len(st.session_state.chat_history)):     
-                if st.session_state.chat_history[i]["role"] == "human":
-                    with st.chat_message("user"):
-                        st.write(st.session_state.chat_history[i]["data"])
-                elif st.session_state.chat_history[i]["role"] == "ai":
-                    with st.chat_message("assistant"):
-                        if st.session_state.chat_history[i]["type"] == "normal":
+def main():
+    initialize()
+    with container:
+        with st.form(key='my_form', clear_on_submit=True):
+            st.subheader("Question: ")
+            st.markdown(sample_qns)
+            user_input = st.text_area("Question:", key='input', height=100, label_visibility="hidden")
+            submit_button = st.form_submit_button(label='Send')
+            for i in range(len(st.session_state.chat_history)):     
+                    if st.session_state.chat_history[i]["role"] == "human":
+                        with st.chat_message("user"):
                             st.write(st.session_state.chat_history[i]["data"])
-                        elif st.session_state.chat_history[i]["type"] == "image":
-                            st.image(st.session_state.chat_history[i]["data"])
+                    elif st.session_state.chat_history[i]["role"] == "ai":
+                        with st.chat_message("assistant"):
+                            if st.session_state.chat_history[i]["type"] == "normal":
+                                st.write(st.session_state.chat_history[i]["data"])
+                            elif st.session_state.chat_history[i]["type"] == "image":
+                                st.image(st.session_state.chat_history[i]["data"])
 
-    if submit_button and user_input:
-        chat_click(user_input, chain)
+        if submit_button and user_input:
+            chat_click(user_input, chain)
 
 # The 'message' function is defined to display the messages in the conversation history.
-if 'answers' in st.session_state:
-    if st.session_state['answers']:
-        with response_container:
-            cols = st.columns(2)
-            for i in range(len(st.session_state['answers'])):
-                with cols[0]:
-                    st.subheader("Question: ")
-                    st.write(st.session_state['past'][i])
-                    st.subheader("Answer: ")
-                    st.write(st.session_state['answers'][i])
-                with cols[1]:
-                    st.subheader("Sources: ")
-                    for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
-                        if source:  # Check if source is not an empty string
-                            source_parts = source.split("\\")  # Split by backslash
-                            source_name = source_parts[-1]  # Take the last part after backslash
-                            github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input/"
-                            st.write(index+1, source_name)
-                            st.write(github_url + source_name.replace(' ', '%20') + '.pdf')
+    if 'answers' in st.session_state:
+        if st.session_state['answers']:
+            with response_container:
+                cols = st.columns(2)
+                for i in range(len(st.session_state['answers'])):
+                    with cols[0]:
+                        st.subheader("Question: ")
+                        st.write(st.session_state['past'][i])
+                        st.subheader("Answer: ")
+                        st.write(st.session_state['answers'][i])
+                    with cols[1]:
+                        st.subheader("Sources: ")
+                        for index, source in enumerate(st.session_state['sources'][i].split(".pdf")):
+                            if source:  # Check if source is not an empty string
+                                source_parts = source.split("\\")  # Split by backslash
+                                source_name = source_parts[-1]  # Take the last part after backslash
+                                github_url = "https://github.com/lawhs1248/ask-economist-test/blob/main/input/"
+                                st.write(index+1, source_name)
+                                st.write(github_url + source_name.replace(' ', '%20') + '.pdf')
                                 
-        # send_survey_result(st.session_state.session_id, st.session_state.nerve_logger, st.session_state['credentials_correct'], user_input)
+if __name__ == "__main__":
+    main()
