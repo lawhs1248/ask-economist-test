@@ -52,7 +52,6 @@ def initialize():
 # Define the 'generate_response' function to send the user's message to the AI model 
 # and append the response to the 'generated' list.
 def generate_response(prompt, conversation_chain):
-    prompt = prompt.string()
     if prompt: 
         st.session_state.chat_history.append({"type": "normal", "data": prompt, "role": "human"})
         try:
