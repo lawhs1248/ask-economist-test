@@ -46,6 +46,9 @@ chain = ConversationalRetrievalChain.from_llm(
     return_source_documents=True
 )
 
+def initialize():
+    st.session_state.setdefault('chat_history',[])
+
 # Define the 'generate_response' function to send the user's message to the AI model 
 # and append the response to the 'generated' list.
 def generate_response(prompt, conversation_chain):
@@ -110,8 +113,6 @@ with container:
                         elif st.session_state.chat_history[i]["type"] == "image":
                             st.image(st.session_state.chat_history[i]["data"])
 
-
-    
     if submit_button and user_input:
         chat_click(user_input, chain)
 
