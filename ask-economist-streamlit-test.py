@@ -67,9 +67,9 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['sources'].append(sources)
         st.session_state['past'].append(user_chat_input)
         st.session_state['answers'].append(answer)
-        st.session_state.messages.append({"role": "user", "content": user_chat_input})
-        with st.chat_message("user"):
-            st.markdown(user_chat_input)
+        #st.session_state.messages.append({"role": "user", "content": user_chat_input})
+        #with st.chat_message("user"):
+        #    st.markdown(user_chat_input)
 
 # Streamlit to set the page header and icon.
 st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
