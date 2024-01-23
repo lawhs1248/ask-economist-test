@@ -101,10 +101,10 @@ with container:
             for message in st.session_state.messages:
                 if message["role"] == 'assistant':
                     with st.chat_message(message["role"]):
-                        st.markdown(message["content"])
+                        st.markdown(message["user_input"])
                 else:
                     with st.chat_message(message["role"]):
-                        st.markdown(message["content"])
+                        st.markdown(message["user_input"])
             submit_button = st.form_submit_button(label='Send')
 
     
