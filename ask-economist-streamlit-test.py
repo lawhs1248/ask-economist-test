@@ -1,9 +1,9 @@
 import os
 
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-import sqlite3
+# __import__('pysqlite3')
+# import sys
+# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+# import sqlite3
 import streamlit as st 
 
 from langchain.chains.question_answering import load_qa_chain
@@ -14,6 +14,7 @@ from langchain.vectorstores import Chroma
 from langchain.embeddings import AzureOpenAIEmbeddings
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferWindowMemory
+from langchain.memory import ConversationSummaryBufferMemory
 
 openai_token = os.environ.get("OPENAI_TOKEN", "")
 openai_endpoint = "https://mti-nerve-openai-us-east-2.openai.azure.com/"
@@ -35,7 +36,12 @@ llm = AzureChatOpenAI(temperature=0,
 )
 
  # Create memory 'chat_history' 
-memory = ConversationBufferWindowMemory(k=3,memory_key="chat_history")
+#memory = ConversationBufferWindowMemory(k=3,memory_key="chat_history")
+memory = ConversationSummaryBufferMemory(
+    llm=llm,
+    output_key='answer',
+    memory_key='chat_history',
+    return_messages=True)
 
 chain = ConversationalRetrievalChain.from_llm(
     llm=llm,
@@ -52,16 +58,18 @@ def initialize():
 # Define the 'generate_response' function to send the user's message to the AI model 
 # and append the response to the 'generated' list.
 def generate_response(prompt, conversation_chain):
+    print(prompt)
     if prompt: 
         st.session_state.chat_history.append({"type": "normal", "data": prompt, "role": "human"})
         try:
-            result = conversation_chain.run(prompt)
+            result = conversation_chain(prompt) 
             st.session_state.chat_history.append({"type": "normal", "data": result["answer"], "role": "ai"})
             return result["answer"], ' '.join(list(set([doc.metadata['source'] for doc in result['source_documents']])))
         except Exception as e:
             print(e)
             st.session_state.chat_history.append({'type': 'normal', 'data':  "I am unable to get the response based on this question, please fine-tune it before retrying", 'role': 'ai'})
-
+            return "I am unable to get the response based on this question, please fine-tune it before retrying", ""
+        
 # The 'chat_click' function is defined to send the user's message to the AI model 
 # and append the response to the conversation history.
 def chat_click(user_chat_input, conversation_chain):
