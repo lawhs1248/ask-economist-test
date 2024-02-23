@@ -124,7 +124,7 @@ def main():
         if submit_button and user_input:
             chat_click(user_input, chain)
         
-        st.button('Reset Chat', on_click=reset_conversation)
+    #st.button('Reset Chat', on_click=reset_conversation)
 
 # The 'message' function is defined to display the messages in the conversation history.
     if 'answers' in st.session_state:
