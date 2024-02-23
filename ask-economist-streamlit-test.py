@@ -1,9 +1,5 @@
 import os
 
-# __import__('pysqlite3')
-# import sys
-# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-# import sqlite3
 import streamlit as st 
 
 from langchain.chains.question_answering import load_qa_chain
@@ -82,6 +78,10 @@ def chat_click(user_chat_input, conversation_chain):
         st.session_state['past'].append(user_chat_input)
         st.session_state['answers'].append(answer)
 
+def reset_conversation():
+  st.session_state.conversation = None
+  st.session_state.chat_history = None
+
 # Streamlit to set the page header and icon.
 st.set_page_config(page_title="Ask Economist", page_icon=":robot:")
 st.title("Ask Economist")
@@ -123,6 +123,8 @@ def main():
 
         if submit_button and user_input:
             chat_click(user_input, chain)
+        
+        st.button('Reset Chat', on_click=reset_conversation)
 
 # The 'message' function is defined to display the messages in the conversation history.
     if 'answers' in st.session_state:
